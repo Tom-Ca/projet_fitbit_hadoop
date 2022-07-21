@@ -1,0 +1,108 @@
+[
+  {
+    "activeDuration": 614000,
+    "activeZoneMinutes": {
+      "minutesInHeartRateZones": [
+        {
+          "minuteMultiplier": 1,
+          "minutes": 0,
+          "order": 1,
+          "type": "FAT_BURN",
+          "zoneName": "Fat Burn"
+        },
+        {
+          "minuteMultiplier": 2,
+          "minutes": 0,
+          "order": 2,
+          "type": "CARDIO",
+          "zoneName": "Cardio"
+        },
+        {
+          "minuteMultiplier": 0,
+          "minutes": 0,
+          "order": 0,
+          "type": "OUT_OF_ZONE",
+          "zoneName": "Out of Range"
+        },
+        {
+          "minuteMultiplier": 2,
+          "minutes": 0,
+          "order": 3,
+          "type": "PEAK",
+          "zoneName": "Peak"
+        }
+      ],
+      "totalMinutes": 0
+    },
+    "activityLevel": [
+      {
+        "minutes": 1,
+        "name": "sedentary"
+      },
+      {
+        "minutes": 0,
+        "name": "lightly"
+      },
+      {
+        "minutes": 6,
+        "name": "fairly"
+      },
+      {
+        "minutes": 3,
+        "name": "very"
+      }
+    ],
+    "activityName": "Walk",
+    "activityTypeId": 90013,
+    "averageHeartRate": 97,
+    "calories": 62,
+    "caloriesLink": "https://api.fitbit.com/1/user/-/activities/calories/date/2022-05-27/2022-05-27/1min/time/13:26/13:36.json",
+    "duration": 614000,
+    "elevationGain": 40,
+    "hasActiveZoneMinutes": true,
+    "heartRateLink": "https://api.fitbit.com/1/user/-/activities/heart/date/2022-05-27/2022-05-27/1sec/time/13:26:06/13:36:20.json",
+    "heartRateZones": [
+      {
+        "caloriesOut": 62.47071,
+        "max": 118,
+        "min": 30,
+        "minutes": 10,
+        "name": "Out of Range"
+      },
+      {
+        "caloriesOut": 0,
+        "max": 145,
+        "min": 118,
+        "minutes": 0,
+        "name": "Fat Burn"
+      },
+      {
+        "caloriesOut": 0,
+        "max": 178,
+        "min": 145,
+        "minutes": 0,
+        "name": "Cardio"
+      },
+      {
+        "caloriesOut": 0,
+        "max": 220,
+        "min": 178,
+        "minutes": 0,
+        "name": "Peak"
+      }
+    ],
+    "lastModified": "2022-05-27T11:43:51.000Z",
+    "logId": 48355921595,
+    "logType": "auto_detected",
+    "manualValuesSpecified": {
+      "calories": false,
+      "distance": false,
+      "steps": false
+    },
+    "originalDuration": 614000,
+    "originalStartTime": "2022-05-27T13:26:06.000+02:00",
+    "startTime": "2022-05-27T13:26:06.000+02:00",
+    "steps": 790,
+    "tcxLink": "https://api.fitbit.com/1/user/-/activities/48355921595.tcx"
+  }
+]

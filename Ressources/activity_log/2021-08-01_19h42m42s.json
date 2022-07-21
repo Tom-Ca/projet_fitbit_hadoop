@@ -1,0 +1,128 @@
+[
+  {
+    "activeDuration": 5286000,
+    "activeZoneMinutes": {
+      "minutesInHeartRateZones": [
+        {
+          "minuteMultiplier": 2,
+          "minutes": 1,
+          "order": 3,
+          "type": "PEAK",
+          "zoneName": "Peak"
+        },
+        {
+          "minuteMultiplier": 1,
+          "minutes": 13,
+          "order": 1,
+          "type": "FAT_BURN",
+          "zoneName": "Fat Burn"
+        },
+        {
+          "minuteMultiplier": 2,
+          "minutes": 71,
+          "order": 2,
+          "type": "CARDIO",
+          "zoneName": "Cardio"
+        },
+        {
+          "minuteMultiplier": 0,
+          "minutes": 0,
+          "order": 0,
+          "type": "OUT_OF_ZONE",
+          "zoneName": "Out of Range"
+        }
+      ],
+      "totalMinutes": 157
+    },
+    "activityLevel": [
+      {
+        "minutes": 0,
+        "name": "sedentary"
+      },
+      {
+        "minutes": 0,
+        "name": "lightly"
+      },
+      {
+        "minutes": 0,
+        "name": "fairly"
+      },
+      {
+        "minutes": 88,
+        "name": "very"
+      }
+    ],
+    "activityName": "Run",
+    "activityTypeId": 90009,
+    "averageHeartRate": 155,
+    "calories": 1022,
+    "caloriesLink": "https://api.fitbit.com/1/user/-/activities/calories/date/2021-08-01/2021-08-01/1min/time/19:54/21:23.json",
+    "distance": 7.360472,
+    "distanceUnit": "Mile",
+    "duration": 5292000,
+    "elevationGain": 92.998688,
+    "hasActiveZoneMinutes": true,
+    "heartRateLink": "https://api.fitbit.com/1/user/-/activities/heart/date/2021-08-01/2021-08-01/1sec/time/19:54:48/21:23:00.json",
+    "heartRateZones": [
+      {
+        "caloriesOut": 25.56511999999998,
+        "max": 119,
+        "min": 30,
+        "minutes": 3,
+        "name": "Out of Range"
+      },
+      {
+        "caloriesOut": 132.84732,
+        "max": 145,
+        "min": 119,
+        "minutes": 13,
+        "name": "Fat Burn"
+      },
+      {
+        "caloriesOut": 854.03479,
+        "max": 179,
+        "min": 145,
+        "minutes": 71,
+        "name": "Cardio"
+      },
+      {
+        "caloriesOut": 12.21191,
+        "max": 220,
+        "min": 179,
+        "minutes": 1,
+        "name": "Peak"
+      }
+    ],
+    "lastModified": "2021-08-01T19:42:42.000Z",
+    "logId": 41710058725,
+    "logType": "tracker",
+    "manualValuesSpecified": {
+      "calories": false,
+      "distance": false,
+      "steps": false
+    },
+    "originalDuration": 5292000,
+    "originalStartTime": "2021-08-01T19:54:48.000+02:00",
+    "pace": 718.753985712487,
+    "source": {
+      "id": "173143671",
+      "name": "Versa 3",
+      "trackerFeatures": [
+        "HEARTRATE",
+        "GPS",
+        "STEPS",
+        "VO2_MAX",
+        "DISTANCE",
+        "CALORIES",
+        "ELEVATION",
+        "PACE"
+      ],
+      "type": "tracker",
+      "url": "https://www.fitbit.com/"
+    },
+    "speed": 5.008667877412032,
+    "startTime": "2021-08-01T19:54:48.000+02:00",
+    "steps": 14589,
+    "tcxLink": "https://api.fitbit.com/1/user/-/activities/41710058725.tcx"
+  }
+]
