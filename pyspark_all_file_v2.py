@@ -15,9 +15,8 @@ from pyspark.sql.types import IntegerType, FloatType
 
 
 def tab1(spark):
-    # df = spark.read.option("multiline", "true").json(f"hdfs://localhost:19000/tomca/user/activities_heart/2021-08-01.json")
+    print("tab 1")
     df = spark.read.option("multiline", "true").json(f"hdfs://localhost:19000/tomca/user/activities_heart/*.json")
-    df.printSchema()
     df2 = df.select(df["activities-heart"]["dateTime"].getItem(0).alias('date'),
                     F.explode(df["activities-heart-intraday"]["dataset"]).alias('vals')) \
         .select("vals.time", "vals.value", "date") \
@@ -25,46 +24,60 @@ def tab1(spark):
     df2.show()
 
     df2.write.option("header", True).csv(f'hdfs://localhost:19000/tomca/user/all_files_spark/BPM.csv')
+    print("fichier d'entré : ")
+    df.show()
+    df.printSchema()
 
+    print("fichier de sortie : ")
+    df2.show()
+    df2.printSchema()
 
 def stat(spark):
+    print("stat 1")
     df = spark.read.options(header=True).csv(f'hdfs://localhost:19000/tomca/user/all_files_spark/BPM.csv')
     df = df.withColumn("value", df["value"].cast(IntegerType()))
-    df.printSchema()
+    print("fichier d'entré : ")
     df.show()
+    df.printSchema()
 
     try:
         df2 = df.groupBy("date") \
             .agg(F.min("value").alias("min_value"),
                  F.avg("value").alias("avg_value"),
                  F.max("value").alias("max_value"))
-        df2.printSchema()
+        print("fichier de sortie 1: ")
         df2.show()
+        df2.printSchema()
         df2.write.option("header", True).csv(f'hdfs://localhost:19000/tomca/user/all_files_spark/group_by_days.csv')
 
         df3 = df.groupBy("date", "HOUR") \
             .agg(F.min("value").alias("min_value"),
                  F.avg("value").alias("avg_value"),
                  F.max("value").alias("max_value"))
-        df3.printSchema()
+        print("fichier de sortie 2: ")
         df3.show()
+        df3.printSchema()
         df3.write.option("header", True).csv(f'hdfs://localhost:19000/tomca/user/all_files_spark/group_by_days_hour.csv')
     except:
         pass
 
 
 def tab2_spark(spark):
+    print("tab 2")
     df_init = spark.read.options(header=True).csv(f'hdfs://localhost:19000/tomca/user/all_files_spark/BPM.csv')
 
     df = spark.read.option("multiline", "true").json(f"hdfs://localhost:19000/tomca/user/activity_log/*.json")
+    print("fichier d'entré 1 : ")
+    df_init.show()
+    df_init.printSchema()
+    print("fichier d'entré 2 : ")
+    df.show()
+    df.printSchema()
 
-    # try:
     df2 = df.select(df["originalDuration"].alias('Duration'), df["originalStartTime"].alias('StartTime'),
                     df["activityName"].alias('activityName')) \
         .withColumn('date', F.split('StartTime', 'T').getItem(0)) \
         .withColumn('HOUR', F.split('StartTime', 'T').getItem(1))
-    df2.show()
-    df2.printSchema()
     data_collect = df2.collect()
     i = True
     for row in data_collect:
@@ -74,9 +87,7 @@ def tab2_spark(spark):
         hour = row["HOUR"].split(":")
         HOUR = f"{hour[0]}:{hour[1]}:00"
         list_hour = pd.date_range(HOUR, periods=Duration, freq="1min").strftime('%H:%M:%S').to_list()
-        print(date, Duration, activityName, list_hour)
         df_not_empty = df_init.filter(df_init["date"].isin([date])).count() > 0
-        print(df_not_empty, type(df_not_empty))
         if df_not_empty:
             # print('ok')
             if i:
@@ -91,28 +102,30 @@ def tab2_spark(spark):
                                                     activityName)
                                              .when(df_init["sport"] != "0", df_init["sport"])
                                              .otherwise("0"))
-        # else:
-        #     print("no ok")
+    print("fichier de sortie : ")
     df_init.show()
     df_init.printSchema()
-
     df_init.write.option("header", True).csv(f'hdfs://localhost:19000/tomca/user/all_files_spark/BPM_plus_sport.csv')
 
-    # except:
-    #     pass
 
 def tab2_pd(spark):
+    print("tab 2")
     df_init = spark.read.options(header=True).csv(f'hdfs://localhost:19000/tomca/user/all_files_spark/BPM.csv')
     dataset_init = df_init.toPandas()
     df = spark.read.option("multiline", "true").json(f"hdfs://localhost:19000/tomca/user/activity_log/*.json")
+
+    print("fichier d'entré 1 : ")
+    df_init.show()
+    df_init.printSchema()
+    print("fichier d'entré 2 : ")
+    df.show()
+    df.printSchema()
 
     df2 = df.select(df["originalDuration"].alias('Duration'), df["originalStartTime"].alias('StartTime'),
                     df["activityName"].alias('activityName')) \
         .withColumn('date', F.split('StartTime', 'T').getItem(0)) \
         .withColumn('HOUR', F.split('StartTime', 'T').getItem(1))
     dataset = df2.toPandas()
-    print(dataset)
-    print(dataset_init)
     dataset["sport"] = np.nan
 
     hour_all = {'time': [], 'date': [], 'sport': []}
@@ -129,32 +142,35 @@ def tab2_pd(spark):
         # print(date, Duration, activityName)
         # print(df_hour)
         df_hour_all = pd.concat([df_hour_all, df_hour])
-    print(df_hour_all)
     df_hour_all["TS"] = df_hour_all['date'].astype(str) + df_hour_all["time"].astype(str)
     dataset_init["TS"] = dataset_init['date'].astype(str) + dataset_init["time"].astype(str)
     df_hour_all = df_hour_all[["sport", "TS"]]
-    print(df_hour_all)
     df_cd = pd.merge(df_hour_all, dataset_init, how='right', on='TS')
     print(df_cd)
     df_cd['sport'] = df_cd['sport'].fillna("0")
     sparkDF = spark.createDataFrame(df_cd)
+    print("fichier de sortie : ")
+    sparkDF.show()
+    sparkDF.printSchema()
     sparkDF.write.option("header", True).csv(f'hdfs://localhost:19000/tomca/user/all_files_spark/BPM_plus_sport.csv')
 
 
 def stat2(spark):
+    print("stat 2")
     df = spark.read.options(header=True).csv(f'hdfs://localhost:19000/tomca/user/all_files_spark/BPM_plus_sport.csv')
     df = df.withColumn("value", df["value"].cast(IntegerType()))
-    df.printSchema()
+    print("fichier d'entré 1 : ")
     df.show()
+    df.printSchema()
 
     df2 = df.groupBy("date") \
         .agg(F.min("value").alias("min_value"),
              F.avg("value").alias("avg_value"),
              F.max("value").alias("max_value"),
              F.max("sport").alias("sport"))
-
-    df2.printSchema()
+    print("fichier de sortie 1: ")
     df2.show()
+    df2.printSchema()
     df2.write.option("header", True).csv(f'hdfs://localhost:19000/tomca/user/all_files_spark/group_by_days_sport.csv')
 
     df3 = df.groupBy("date", "HOUR") \
@@ -162,12 +178,14 @@ def stat2(spark):
              F.avg("value").alias("avg_value"),
              F.max("value").alias("max_value"),
              F.max("sport").alias("sport"))
-    df3.printSchema()
+    print("fichier de sortie 2: ")
     df3.show()
+    df3.printSchema()
     df3.write.option("header", True).csv(f'hdfs://localhost:19000/tomca/user/all_files_spark/group_by_days_hour_sport.csv')
 
 
 def affichage2(spark):
+    print("affichage 2")
     df = spark.read.options(header=True).csv(f'hdfs://localhost:19000/tomca/user/all_files_spark/group_by_days_sport.csv')
     df = df.withColumn("max_value", df["max_value"].cast(IntegerType())) \
         .withColumn("min_value", df["min_value"].cast(IntegerType())) \
@@ -179,7 +197,6 @@ def affichage2(spark):
     plt.plot(pandasDF["date"], pandasDF["min_value"], color='green')
     plt.plot(pandasDF["date"], pandasDF["max_value"], color='red')
     plt.bar(pandasDF["date"], pandasDF["sport"], color='cyan')
-    print(pandasDF)
     plt.ylim(20, 200)
     plt.show()
 
@@ -196,11 +213,11 @@ def affichage2(spark):
     plt.bar(pandasDF["TS"], pandasDF["sport"], color='cyan')
     # todo ecart max min
     plt.margins(x=0, y=-0.25)
-    print(pandasDF)
     plt.ylim(20, 200)
     plt.show()
 
 def affichage(spark):
+    print("affichage 1")
     df = spark.read.options(header=True).csv(f'hdfs://localhost:19000/tomca/user/all_files_spark/group_by_days_sport.csv')
     df = df.withColumn("max_value", df["max_value"].cast(IntegerType())) \
         .withColumn("min_value", df["min_value"].cast(IntegerType())) \
@@ -211,7 +228,6 @@ def affichage(spark):
     plt.plot(pandasDF["date"], pandasDF["min_value"], color='green')
     plt.plot(pandasDF["date"], pandasDF["max_value"], color='red')
 
-    print(pandasDF)
     plt.ylim(20, 200)
     plt.show()
 
@@ -226,11 +242,12 @@ def affichage(spark):
     plt.plot(pandasDF["TS"], pandasDF["max_value"], color='red')
     # todo ecart max min
     plt.margins(x=0, y=-0.25)
-    print(pandasDF)
     plt.ylim(20, 200)
     plt.show()
 
 def affichage_day(spark):
+    print("affichage day")
+
     empty = 1
     df = spark.read.options(header=True).csv(
         f'hdfs://localhost:19000/tomca/user/all_files_spark/group_by_days_hour_sport.csv')
@@ -253,7 +270,6 @@ def affichage_day(spark):
     plt.bar(pandasDF["HOUR"], pandasDF["sport"], color='cyan')
     # todo ecart max min
     plt.margins(x=0, y=-0.25)
-    print(pandasDF)
     plt.ylim(20, 200)
     plt.show()
 
@@ -270,9 +286,9 @@ if __name__ == '__main__':
     # # tab2_spark(spark)
     # tab2_pd(spark)
     # stat2(spark)
-    # affichage(spark)
-    # affichage2(spark)
-    # affichage_day(spark)
+    affichage(spark)
+    affichage2(spark)
+    affichage_day(spark)
     # create_the_AI_training_dataset("BPM_plus_sport.csv", "df_sport_for_ia2.csv", "file_sport_for_IA.csv")
     # train_model(spark)
     use_model(spark)

@@ -65,7 +65,7 @@ def stat(spark):
         .agg(F.min("value").alias("min_value"),
              F.avg("value").alias("avg_value"),
              F.max("value").alias("max_value"))
-    print("fichier de sortie 1: ")
+    print("fichier de sortie 2: ")
     df3.show()
     df3.printSchema()
 
